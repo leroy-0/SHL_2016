@@ -1,0 +1,13 @@
+#!/bin/sh
+
+if [ $# -ne 1 ] ; then
+   echo "USAGE: $0 DirName" >&2; exit 1
+fi
+
+if [ ! -d "$1" ]; then
+   echo "ERROR: $1 is not a directory" >&2; exit 1
+fi
+
+find $1 -type d -print | sort -u | sed -e 's;[^/]*/; /;g;s;/ ;|     ;g;s;^ /$;.;;s; /;|--> ;g;s; | ;| ;g' 
+
+exit 0

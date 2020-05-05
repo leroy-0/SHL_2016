@@ -1,0 +1,48 @@
+#!/bin/sh
+
+if [ $# -ne 1 ]
+  then
+   echo -e "USAGE: $0 n\nDisplay n first primary number" >&2; exit 1
+fi
+
+re='^[0-9]+$'
+
+if ! [[ $1 =~ $re ]] 
+	then
+   echo "ERROR" >&2; exit 1
+fi
+
+end=$1
+i=2
+isprime=0
+
+while [ $end -ne 0 ]
+do
+        temp=$(($i))
+
+        while [ $temp -ne 2 ]
+        do
+                temp=`expr $temp - 1`
+                n=`expr $i % $temp`
+
+                if [ $n -eq 0 ] && [ $isprime -eq 0 ]
+                then
+                        isprime=1
+                fi
+        done
+
+        if [ $isprime -eq 0 ]
+        then
+                echo -n $i
+                end=`expr $end - 1`
+                if [ $end -ne 0 ]
+                	then
+                		echo -n " "
+                	fi
+        else
+                isprime=0
+        fi
+        i=`expr $i + 1`
+done
+echo ""
+exit 0

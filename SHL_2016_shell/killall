@@ -1,0 +1,104 @@
+#!/bin/sh
+
+usage_msg() {
+  echo -e "USAGE: $0 option\noption: -user user1 ... : Kill all processes for user1, ...\n\t-pid pid1 ... : Kill a process with pid pid1, ...\n\t-prog prog1 ... : Kill all processes whose program's name is prog1, ...\n\t-all : Kill all processes" >&2; exit 1
+}
+
+kill_user() {
+for pid in `ps -u $1`
+do
+  re='^[0-9]+$'
+
+  if [[ $pid =~ $re ]] ; then
+    kill $pid
+  fi
+done
+}
+
+kill_pid() {
+re='^[0-9]+$'
+
+if ! [[ $1 =~ $re ]] ; then
+    echo "Error : argument $1 is not valid" >&2
+  else
+    kill $1 &> /dev/null
+    if [ $? -eq 1 ]
+      then
+      echo -e "ERROR: pid $1 : no process found" >&2
+    fi
+
+fi
+}
+
+kill_prog() {
+for pid in `ps -ax | grep $1`
+do
+  re='^[0-9]+$'
+
+  if [[ $pid =~ $re ]]
+    then
+    kill $pid &> /dev/null 
+  fi
+done
+}
+
+kill_all() {
+for pid in `ps -A`
+do
+  re='^[0-9]+$'
+
+  if [[ $pid =~ $re ]] ; then
+    kill $pid
+  fi
+done
+}
+
+
+if [ $# -eq 0 ]
+  then
+    usage_msg
+fi
+
+case $1 in
+  "-user")
+      n=1
+      for var in "$@"
+      do
+        if [ $n -gt 1 ]
+        then
+          kill_user $var
+        fi
+        n=$(($n + 1))
+      done
+      ;;
+  "-pid")
+      n=1
+      for var in "$@"
+      do
+        if [ $n -gt 1 ]
+        then
+          kill_pid $var
+        fi
+        n=$(($n + 1))
+      done
+      ;;
+  "-prog")
+      n=1
+      for var in "$@"
+      do
+        if [ $n -gt 1 ]
+        then
+          kill_prog $var
+        fi
+        n=$(($n + 1))
+      done
+      ;;
+  "-all")
+      kill_all
+      ;;
+  *) usage_msg
+   ;;
+esac
+
+
+exit 0

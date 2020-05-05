@@ -1,0 +1,33 @@
+#!/bin/sh
+
+if [ $# -ne 1 ]
+then
+    echo -e "USAGE: $0 BinNumber\nConvert binary number to decimal number" >&2; exit 1
+fi
+
+calculate_bin2dec_neg() {
+
+	file=$(($1 * -1))
+	tmp="$((2#$file))"
+	tmp=$(($tmp * -1))
+	echo "bin2dec($1)=$tmp"
+}
+
+binary='^-?[0-1]+$'
+
+if ! [[ $1 =~ $binary ]] ; then
+    echo "Error" >&2; exit 1
+fi
+
+minus="^(-.*)$"
+
+if ! [[ $1 =~ $minus ]]
+	then
+		echo "bin2dec($1)=$((2#$1))"
+	else
+		calculate_bin2dec_neg $1
+fi
+
+exit 0
+
+"$(echo "$1" | sed 's/-//g')"

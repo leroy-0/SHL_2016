@@ -1,0 +1,39 @@
+#!/bin/sh
+
+if [ $# -lt 1 ]
+  then
+   echo -e "USAGE: $0 -l -u\n-l : lowcase\n-u : upcase" >&2; exit 1
+fi
+
+choose_arg() {
+
+if [[ $1 = "-l" ]]
+	then
+		tmp=$(cat | tr '[:upper:]' '[:lower:]')
+fi
+if [[ $1 = "-u" ]]
+	then
+		tmp=$(cat | tr '[:lower:]' '[:upper:]')
+fi
+echo "$tmp"
+}
+
+i=0
+for var in $*
+	do
+	my_args[$i]=$var
+	if [[ $var != "-l" ]] && [[ $var != "-u" ]] ; then
+	echo "ERROR: $arg unknown option" >&2 ; exit 1
+	i=$(($i + 1))
+fi
+done
+
+i=0
+while [ $i -lt ${#my_args[*]} ]
+	do
+		toto=$(choose_arg "${my_args[$i]}")
+		i=$(($i + 1))
+done
+
+echo "$toto"
+exit 0

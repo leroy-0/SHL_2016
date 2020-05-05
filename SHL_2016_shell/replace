@@ -1,0 +1,28 @@
+#!/bin/sh
+
+if [ $# -ne 3 ]
+  then
+   echo -e "USAGE: $0 original_stringfile replace_stringfile file\nReplace in file each string of original_stringfile by replace_stringfile" >&2; exit 1
+fi
+
+check_occurence() {
+
+	if test "${1#*$2}" != "$1"
+		then
+		repl=$(sed -n "$3 p" < $4)
+        tmp=${1/$2/$repl}
+        echo "$tmp"
+        repl=
+	fi
+}
+
+line=1
+res=$(cat $3)
+cat $1 | ( while read orig
+do :
+
+	res=$(check_occurence "$res" "$orig" $line "$2")
+    ((line++))
+done
+echo -e "$res")
+exit 0

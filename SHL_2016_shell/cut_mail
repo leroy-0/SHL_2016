@@ -1,0 +1,36 @@
+#!/bin/sh
+
+if [ $# -ne 2 ]
+  then
+   echo "USAGE: $0 mbox destdir" >&2; exit 1
+fi
+
+if ! [ -f $1 ]
+    then
+      echo -e "ERROR: file not found" >&2; exit 1
+fi
+
+mkdir -p $2
+IFS=''
+save=0
+namefile=0
+item_re="^(From .*)$"
+cat $1 | ( while read LINE
+do
+        :
+            if [[ $LINE =~ $item_re ]]; then
+                if [[ "$save" == "" ]]
+                  then
+                  sed -i '$ d' $2/$namefile.mail
+                fi
+                item=${BASH_REMATCH[1]}
+                ((namefile++))
+                echo "$item" > $2/$namefile.mail
+            else
+                echo "$LINE" >> $2/$namefile.mail
+            fi
+            save=$LINE
+done
+echo $namefile mail found)
+
+exit 0
